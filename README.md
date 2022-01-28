@@ -1,10 +1,29 @@
 # Plugin.YoutubeLibrary
 A Xamarin Library for handling Youtube Api requests
-## Versions
 
-### Version 1.1 (Current)
-Contains the structure of defining the functions and tools for other part of the library <br>
-Handles Api initialization and retrieval of Users playlists<br>
+## Folders Used
+**Api**: This contains the code for handling the api calls <br>
+**util**: Random helpers/functions used <br>
+**Youtube**: The youtube service <br>
 
-## Notes
-Currently returns error messages in the form of strings
+
+
+## Code Snippet
+
+``` c#
+using YoutubeLibrary.youtube;
+public MainWindow()
+{
+  InitializeComponent();
+
+  string ApiKey = "";
+  string Accesstoken = "";
+  YoutubeClient youtube = new YoutubeClient(ApiKey);
+  YoutubeClient youtube2 = new YoutubeClient(ApiKey, Accesstoken);
+
+  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
+
+}
+``` 
+
+
