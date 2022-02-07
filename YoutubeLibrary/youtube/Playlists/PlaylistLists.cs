@@ -19,12 +19,12 @@ namespace YoutubeLibrary.youtube
             service = Service;
         }
         //standard playlists request
-        public string getPlaylist(String[] part, bool Mine)
+        public string getPlaylist(String[] _parameter, bool Mine)
         {  
             //get the parts if they are specified
-            if (part != null)
+            if (_parameter != null)
             {
-                parts = valueUtil.getPart(part);
+                parts = valueUtil.getPart(_parameter);
             }
             request.method = Method.GET;   
             mine = valueUtil.isMine(Mine);
@@ -34,14 +34,15 @@ namespace YoutubeLibrary.youtube
 
         }
         //playlists request with optional parameters
-        public string getPlaylist(String[] part, bool Mine, Parameters.Body[] body)
+        public string getPlaylist(String[] _parameter, bool Mine, List<Body_Item> _body)
         {
 
             //get the parts if they are specified
-            if (part != null)
+            if (_parameter != null)
             {
-                parts = valueUtil.getPart(part);
+                parts = valueUtil.getPart(_parameter);
             }
+            request.body.body_Items = _body;
             request.method = Method.GET;
             mine = valueUtil.isMine(Mine);
             request.Mine = Mine;
@@ -49,12 +50,12 @@ namespace YoutubeLibrary.youtube
             return result;
 
         }
-        public string insertPlaylist(String title, String[] part = null)
+        public string insertPlaylist(String title, String[] _parameter = null)
         {
             //get the parts if they are specified
-            if (part != null)
+            if (_parameter != null)
             {
-                parts = valueUtil.getPart(part);
+                parts = valueUtil.getPart(_parameter);
             }
             request.method = Method.POST;
 
@@ -67,12 +68,12 @@ namespace YoutubeLibrary.youtube
             callAsync();
             return result;
         }
-        public string insertPlaylist(List<Body_Item> _body, String[] part = null)
+        public string insertPlaylist(List<Body_Item> _body, String[] _parameter = null)
         {
             //get the parts if they are specified
-            if (part != null)
+            if (_parameter != null)
             {
-                parts = valueUtil.getPart(part);
+                parts = valueUtil.getPart(_parameter);
             }
 
             request.method = Method.POST;
