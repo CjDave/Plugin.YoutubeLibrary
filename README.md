@@ -23,6 +23,26 @@ public MainWindow()
   YoutubeClient youtube2 = new YoutubeClient(ApiKey, Accesstoken);
 }
 ``` 
+## Retrieve playlists
+To get the playlists calls the **youtube.playlistsList.getPlaylist(String[] parameters, bool Mine)** methods. This is an overloaded methood that takes in the following : the parts, Mine, body(optional); 
+
+``` c#
+public MainWindow()
+{
+  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
+  
+}
+``` 
+## Insert playlists
+
+``` c#
+public MainWindow()
+{
+  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
+}
+``` 
+
+
 ## Api Requests
 An example of Api requests and the corresponding parts of the code
 ``` c#
@@ -50,22 +70,3 @@ Body
 }
 
 ``` 
-## Retrieve playlists
-To get the playlists calls the **youtube.playlistsList.getPlaylist(String[] parameters, bool Mine)** methods. This is an overloaded methood that takes in the following : the parts, Mine, body(optional); 
-
-``` c#
-public MainWindow()
-{
-  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
-  
-}
-``` 
-## Insert playlists
-
-``` c#
-public MainWindow()
-{
-  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
-}
-``` 
-
