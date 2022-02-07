@@ -3,9 +3,25 @@ using YoutubeLibrary.Api;
 
 namespace YoutubeLibrary.youtube
 {
+    internal class Base
+    {
+        internal string Api_key { get; set; }
+        internal string Access_Token { get; set; }
+        public Base(string key)
+        {
+            Api_key = key;
+            Access_Token = null;
+        }
+        //for non oauth services
+        public Base(string key, string token)
+        {
+            Api_key = key;
+            Access_Token = token;
+        }
+    }
     internal class clientService
     {
-        private Base credential { get;  set; }
+        private Base credential { get; set; }
         internal ApiCall api;
         internal clientService(Base Credential)
         {
@@ -17,7 +33,7 @@ namespace YoutubeLibrary.youtube
     {
         private clientService service;
         public PlaylistLists playlistsList;
-      
+
         //initialization without 0auth token
         public YoutubeClient(string key)
         {

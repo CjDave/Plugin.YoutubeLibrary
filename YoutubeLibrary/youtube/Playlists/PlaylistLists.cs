@@ -1,5 +1,6 @@
 ﻿using YoutubeLibrary.util;
-using static YoutubeLibrary.youtube.Parameters;
+using YoutubeLibrary.youtube.Parameters;
+using static YoutubeLibrary.youtube.Parameters.RequestClass;
 
 namespace YoutubeLibrary.youtube
 {
@@ -12,15 +13,20 @@ namespace YoutubeLibrary.youtube
 
         internal PlaylistLists(clientService Service)
         {
-            request = new Request { method = Method.GET, resource = "playlists?" };
+            request = new Request { resource = "playlists?" };
             parts = "";
             parameters = "";
             service = Service;
         }
         //standard playlists request
         public string getPlaylist(String[] part, bool Mine)
-        {
-            parts = valueUtil.getPart(part);
+        {  
+            //get the parts if they are specified
+            if (part != null)
+            {
+                parts = valueUtil.getPart(part);
+            }
+            request.method = Method.GET;   
             mine = valueUtil.isMine(Mine);
             request.Mine = Mine;
             callAsync();
@@ -30,19 +36,66 @@ namespace YoutubeLibrary.youtube
         //playlists request with optional parameters
         public string getPlaylist(String[] part, bool Mine, Parameters.Body[] body)
         {
-            parts = valueUtil.getPart(part);
+
+            //get the parts if they are specified
+            if (part != null)
+            {
+                parts = valueUtil.getPart(part);
+            }
+            request.method = Method.GET;
             mine = valueUtil.isMine(Mine);
             request.Mine = Mine;
             callAsync();
             return result;
 
         }
+        public string insertPlaylist(String title, String[] part = null)
+        {
+            //get the parts if they are specified
+            if (part != null)
+            {
+                parts = valueUtil.getPart(part);
+            }
+            request.method = Method.POST;
+
+            //create new body item for the snippets
+            Parameters.Body_Item snippet_BodyItem = new Parameters.Body_Item("snippet", new List<Body_Item>());
+            snippet_BodyItem.values.Add(new Body_Item("title", title));
+
+            //Add the body item to the body
+            request.body.body_Items.Add(snippet_BodyItem);
+            callAsync();
+            return result;
+        }
+        public string insertPlaylist(List<Body_Item> _body, String[] part = null)
+        {
+            //get the parts if they are specified
+            if (part != null)
+            {
+                parts = valueUtil.getPart(part);
+            }
+
+            request.method = Method.POST;
+
+            request.body.body_Items = _body;
+            callAsync();
+            return result;
+        }
+
         private async Task callAsync()
         {
             request.parameter = parts + mine + parameters;
-            if (request.parameter != null)
+            switch (request.method)
             {
-                result = await service.api.callApiAsync(request);
+                case Method.POST:
+                    await service.api.postApiAsync(request);
+                    break;
+                case Method.GET:
+                    if (request.parameter != null)
+                    {
+                        result = await service.api.callApiAsync(request);
+                    }
+                    break;
             }
             result = "Error";
         }

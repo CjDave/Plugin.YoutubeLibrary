@@ -1,5 +1,5 @@
-﻿using YoutubeLibrary.youtube;
-
+﻿
+using YoutubeLibrary.youtube.Parameters;
 //utilities for performing various tasks
 namespace YoutubeLibrary.util
 {
@@ -18,10 +18,10 @@ namespace YoutubeLibrary.util
         {
             return mine ? "mine=true" : "&mine=false";
         }
-        public static string getPairs(Parameters.Pair_Value[] pairs)
+        public static string getPairs(Pair_Value[] pairs)
         {
             string parameters = "";
-            foreach (Parameters.Pair_Value temp in pairs)
+            foreach (Pair_Value temp in pairs)
             {
                 parameters = temp.pair + "=" + temp.value;
             }

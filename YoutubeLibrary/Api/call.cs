@@ -1,6 +1,8 @@
 ﻿using YoutubeLibrary.youtube;
-using static YoutubeLibrary.youtube.Parameters;
+using YoutubeLibrary.youtube.Parameters;
 using YoutubeLibrary.util;
+using static YoutubeLibrary.youtube.Parameters.RequestClass;
+using System.Text;
 
 namespace YoutubeLibrary.Api
 {
@@ -13,32 +15,37 @@ namespace YoutubeLibrary.Api
         private string requestUri;
         private string key_Parameter;
         private string accesstoken_Parameter;
-        private Request requestData;
+        private StringContent body;
+        private HttpResponseMessage response;
+        private RequestClass.Request requestData;
         internal ApiCall(Base Credential)
         {
             credential = Credential;
             client = new HttpClient();
             key_Parameter = "&key=" + credential.Api_key + " ";
             accesstoken_Parameter = "Bearer " + credential.Access_Token;
+            response = new HttpResponseMessage();
         }
         ~ApiCall()
         {
             client = new HttpClient();
-            requestData = new Request();
+            requestData = new RequestClass.Request();
             requestUri = null;
             request = null;
             httpMethod = null;
             key_Parameter = null;
+            response = new HttpResponseMessage();
         }
-        internal async Task<string> callApiAsync(Request _request)
+
+        internal async Task<string> postApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
-           // checkExceptions();
             addUri();
             setMethod();
+            addBody();
             addMessage(requestUri);
+            request.Content = body;
             addHeader();
-            var response = new HttpResponseMessage();
             try
             {
                 response = await client.SendAsync(request);
@@ -56,10 +63,40 @@ namespace YoutubeLibrary.Api
             {
                 exceptionHandler.showError(response.ReasonPhrase);
             }
-            return "Error";
+            return "Error";//incomplete
+
+        }
+        internal async Task<string> callApiAsync(RequestClass.Request _request)
+        {
+            requestData = _request;
+            // checkExceptions();
+            addUri();
+            setMethod();
+            addMessage(requestUri);
+            addHeader();
+
+            try
+            {
+
+                response = await client.SendAsync(request);
+            }
+            catch (Exception ex)
+            {
+                exceptionHandler.returnException(ex);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                return content;
+            }
+            else
+            {
+                exceptionHandler.showError(response.ReasonPhrase);
+            }
+            return "Error";//incomplete
         }
         //check Exceptions
-        void checkExceptions()
+        private void checkExceptions()//incomplete
         {
             //an access token is required for Mine requests
             if (requestData.Mine == true && credential.Access_Token == null)
@@ -69,12 +106,12 @@ namespace YoutubeLibrary.Api
 
         }
         //create the request Uri
-        void addUri()
+        private void addUri()
         {
             requestUri = requestData.youtube + requestData.resource + requestData.parameter + key_Parameter + requestData.http;
         }
         //add the Headers to the request
-        void addHeader()
+        private void addHeader()
         {
             request.Headers.Add("Authorization", accesstoken_Parameter);
             request.Headers.Add("Accept", "application/json");
@@ -87,12 +124,42 @@ namespace YoutubeLibrary.Api
             }
         }
         //add body to the request
-        void addBody()
+        private void addBody()
         {
+            // Get the json format of the body items
+            string jsonBody = addBodyItems(requestData.body.body_Items);
+            jsonBody = "{" + jsonBody + "}";
+            //Convert and add the json to the request
+            body = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
         }
+        //serialize the body items to a json style
+        private string addBodyItems(List<Body_Item> items)
+        {
+            string jsonString = "";
+            foreach (Body_Item item in items)
+            {
+                jsonString = jsonString + '\u0022' + item.title + '\u0022' + ":";
+                //contains a value
+                if (item.value != "")
+                {
+                    jsonString = jsonString + '\u0022' + item.value + '\u0022';
+                }
+                //contains multiple values
+                else
+                {
+                    jsonString = jsonString + "{" + addBodyItems(item.values) + "}";
+                }
+                //if its not the last item add a comma
+                if (item != items.Last())
+                {
+                    jsonString = jsonString + ",";
+                }
+            }
+            return jsonString;
+        }
         //add the request message 
-        void addMessage(string message)
+        private void addMessage(string message)
         {
             request = new HttpRequestMessage()
             {
@@ -100,8 +167,8 @@ namespace YoutubeLibrary.Api
                 Method = httpMethod
             };
         }
-        //set the method of the request
-        void setMethod()
+        //set the http method of the request
+        private void setMethod()
         {
             switch (requestData.method)
             {
@@ -110,11 +177,11 @@ namespace YoutubeLibrary.Api
                     break;
 
                 case Method.UPDATE:
-                    httpMethod = HttpMethod.Post;
+                    httpMethod = HttpMethod.Put;
                     break;
 
                 case Method.POST:
-                    httpMethod = HttpMethod.Put;
+                    httpMethod = HttpMethod.Post;
                     break;
 
                 case Method.DELETE:
