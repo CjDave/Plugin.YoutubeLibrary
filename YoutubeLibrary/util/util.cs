@@ -14,20 +14,29 @@ namespace YoutubeLibrary.util
             }
             return parts;
         }
+
         public static string isMine(bool mine)
         {
             return mine ? "mine=true" : "&mine=false";
         }
-        public static string getPairs(Pair_Value[] pairs)
+
+        public static string getParameter(Parameter[] pairs)
         {
-            string parameters = "";
-            foreach (Pair_Value temp in pairs)
+            string parameter = "";
+            foreach (Parameter temp in pairs)
             {
-                parameters = temp.pair + "=" + temp.value;
+                parameter = parameter + temp.title + "=" + temp.value;
             }
-            return parameters;
+            return parameter;
         }
     }
+
+
+
+
+
+
+
     public static class exceptionHandler
     {
         public static string returnException(Exception e)

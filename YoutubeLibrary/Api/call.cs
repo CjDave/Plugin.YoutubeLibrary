@@ -12,12 +12,13 @@ namespace YoutubeLibrary.Api
         private HttpClient client;
         private HttpMethod httpMethod;
         private HttpRequestMessage request;
-        private string requestUri;
-        private string key_Parameter;
-        private string accesstoken_Parameter;
+        private string requestUri, key_Parameter, accesstoken_Parameter,content;
         private StringContent body;
         private HttpResponseMessage response;
-        private RequestClass.Request requestData;
+        private Request requestData;
+        private ExceptionHandler.BaseException exception;
+
+        //Constructor
         internal ApiCall(Base Credential)
         {
             credential = Credential;
@@ -26,6 +27,8 @@ namespace YoutubeLibrary.Api
             accesstoken_Parameter = "Bearer " + credential.Access_Token;
             response = new HttpResponseMessage();
         }
+
+        //Deconstructor
         ~ApiCall()
         {
             client = new HttpClient();
@@ -46,64 +49,70 @@ namespace YoutubeLibrary.Api
             addMessage(requestUri);
             request.Content = body;
             addHeader();
+
             try
             {
                 response = await client.SendAsync(request);
             }
             catch (Exception ex)
             {
-                exceptionHandler.returnException(ex);
+                
             }
             if (response.IsSuccessStatusCode)
             {
-                string content = await response.Content.ReadAsStringAsync();
-                return content;
+                content = await response.Content.ReadAsStringAsync();
             }
             else
             {
-                exceptionHandler.showError(response.ReasonPhrase);
+                return response.ReasonPhrase;
             }
-            return "Error";//incomplete
+            return content;
 
         }
         internal async Task<string> callApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
-            // checkExceptions();
-            addUri();
-            setMethod();
-            addMessage(requestUri);
-            addHeader();
+            if (checkExceptions()) 
+            {
+                addUri();
+                setMethod();
+                addMessage(requestUri);
+                addHeader();
+                try
+                {
+                    response = await client.SendAsync(request);
+                }
+                catch (Exception ex)
+                {
+                    //incomplete
+                }
 
-            try
-            {
-
-                response = await client.SendAsync(request);
-            }
-            catch (Exception ex)
-            {
-                exceptionHandler.returnException(ex);
-            }
-            if (response.IsSuccessStatusCode)
-            {
-                string content = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode)
+                {
+                    content = await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    return response.ReasonPhrase;
+                }
                 return content;
             }
             else
             {
-                exceptionHandler.showError(response.ReasonPhrase);
+                throw exception;
             }
-            return "Error";//incomplete
+            return string.Empty;
         }
         //check Exceptions
-        private void checkExceptions()//incomplete
+        private bool checkExceptions()//incomplete...
         {
-            //an access token is required for Mine requests
+            //An access token is required for Mine requests
             if (requestData.Mine == true && credential.Access_Token == null)
             {
-                exceptionHandler.showError("not authenticated");
+                exception = new ExceptionHandler.BaseException("Access Token Is Required For Mine Requests");
+                return false;
             }
-
+            return true;
         }
         //create the request Uri
         private void addUri()

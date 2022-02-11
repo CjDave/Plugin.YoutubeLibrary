@@ -1,16 +1,19 @@
 ﻿
 namespace YoutubeLibrary.youtube.Parameters
 {
+    //Header
     public record Header
     {
         public string title { get; init; }
         public string value { get; init; }
     }
-    public record Pair_Value
+    //Parameter
+    public record Parameter
     {
-        public string pair { get; init; }
+        public string title { get; init; }
         public string value { get; init; }
     }
+    //Body Item
     public class Body_Item
     {
         public string title { get; init; }
@@ -37,7 +40,7 @@ namespace YoutubeLibrary.youtube.Parameters
         }
 
     }
-    //Body value
+    //Body 
     public record Body
     {
         public List<Body_Item> body_Items;
@@ -46,7 +49,6 @@ namespace YoutubeLibrary.youtube.Parameters
             body_Items = new List<Body_Item>();
         }
     }
-
 
     public class RequestClass
     {
