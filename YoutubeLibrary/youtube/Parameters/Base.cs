@@ -12,6 +12,11 @@ namespace YoutubeLibrary.youtube.Parameters
     {
         public string title { get; init; }
         public string value { get; init; }
+        public Parameter(string Title, string Value)
+        {
+            title = Title;
+            value = Value;
+        }
     }
     //Body Item
     public class Body_Item
@@ -49,12 +54,12 @@ namespace YoutubeLibrary.youtube.Parameters
             body_Items = new List<Body_Item>();
         }
     }
-
+    
     public class RequestClass
     {
         public const string Youtube = "https://youtube.googleapis.com/youtube/v3/";
         public const string Http = "HTTP/1.1";
-        public enum Method { GET, POST, DELETE, UPDATE }
+        public enum Method { GET, POST, DELETE, PUT }
         //Header values
         public struct Request
         {

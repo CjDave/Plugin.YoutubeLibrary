@@ -12,7 +12,7 @@ namespace YoutubeLibrary.Api
         private HttpClient client;
         private HttpMethod httpMethod;
         private HttpRequestMessage request;
-        private string requestUri, key_Parameter, accesstoken_Parameter,content;
+        private string requestUri, key_Parameter, accesstoken_Parameter, content;
         private StringContent body;
         private HttpResponseMessage response;
         private Request requestData;
@@ -26,9 +26,10 @@ namespace YoutubeLibrary.Api
             key_Parameter = "&key=" + credential.Api_key + " ";
             accesstoken_Parameter = "Bearer " + credential.Access_Token;
             response = new HttpResponseMessage();
+
         }
 
-        //Deconstructor
+        //Destructor
         ~ApiCall()
         {
             client = new HttpClient();
@@ -40,23 +41,77 @@ namespace YoutubeLibrary.Api
             response = new HttpResponseMessage();
         }
 
+        //Put Api
+        internal async Task<string> putApiAsync(RequestClass.Request _request)
+        {
+            requestData = _request;
+            addData(true);
+
+            await makeRequestAsync();
+            return content;
+        }
+        //Post Api
         internal async Task<string> postApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
+            addData(true);
+
+            await makeRequestAsync();
+            return content;
+        }
+        //Get Api 
+        internal async Task<string> getApiAsync(RequestClass.Request _request)
+        {
+            requestData = _request;
+            if (checkExceptions())
+            {
+                addData(false);
+
+                await makeRequestAsync();
+                return content;
+            }
+            else
+            {
+                throw exception;
+            }
+            return exception.Message;
+
+        }
+        //Delete Api
+        internal async Task<string> deleteApiAsync(RequestClass.Request _request)
+        {
+            requestData = _request;
+            addData(false);
+
+            await makeRequestAsync();
+            return content;
+        }
+
+        //Add request data
+        private void addData(bool hasBody)
+        {
             addUri();
             setMethod();
-            addBody();
             addMessage(requestUri);
-            request.Content = body;
             addHeader();
 
+            //Add the body
+            if (hasBody)
+            {
+                addBody();
+                request.Content = body;
+            }
+        }
+        //Send the Api Request
+        private async Task makeRequestAsync()
+        {
             try
             {
                 response = await client.SendAsync(request);
             }
             catch (Exception ex)
             {
-                
+                content = ex.Message;
             }
             if (response.IsSuccessStatusCode)
             {
@@ -64,44 +119,8 @@ namespace YoutubeLibrary.Api
             }
             else
             {
-                return response.ReasonPhrase;
+                content = response.ReasonPhrase;
             }
-            return content;
-
-        }
-        internal async Task<string> callApiAsync(RequestClass.Request _request)
-        {
-            requestData = _request;
-            if (checkExceptions()) 
-            {
-                addUri();
-                setMethod();
-                addMessage(requestUri);
-                addHeader();
-                try
-                {
-                    response = await client.SendAsync(request);
-                }
-                catch (Exception ex)
-                {
-                    //incomplete
-                }
-
-                if (response.IsSuccessStatusCode)
-                {
-                    content = await response.Content.ReadAsStringAsync();
-                }
-                else
-                {
-                    return response.ReasonPhrase;
-                }
-                return content;
-            }
-            else
-            {
-                throw exception;
-            }
-            return string.Empty;
         }
         //check Exceptions
         private bool checkExceptions()//incomplete...
@@ -185,7 +204,7 @@ namespace YoutubeLibrary.Api
                     httpMethod = HttpMethod.Get;
                     break;
 
-                case Method.UPDATE:
+                case Method.PUT:
                     httpMethod = HttpMethod.Put;
                     break;
 

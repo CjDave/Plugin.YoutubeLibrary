@@ -10,7 +10,7 @@ namespace YoutubeLibrary.youtube
         private string parts, parameters, mine, error;
         private clientService service;
         private string result;
-       
+
 
         //Constructor
         internal PlaylistLists(clientService Service)
@@ -97,7 +97,7 @@ namespace YoutubeLibrary.youtube
         }
 
         //Insert a playlist  with optional parameters
-        public string insertPlaylist(List<Body_Item> _body, String[] part, Parameter[] parameter)
+        public string insertPlaylist(String[] part, Parameter[] parameter, List<Body_Item> _body)
         {
             if (part == null)
             {
@@ -123,6 +123,32 @@ namespace YoutubeLibrary.youtube
 
         }
 
+        //Update A Playlists
+        public string updatePlaylist(String[] part, List<Body_Item> _body)
+        {
+            if (_body == null)
+            {
+                error = "Please Enter A Body";
+                throwException(error);
+                return error;
+            }
+
+            parts = valueUtil.getPart(part);
+            request.method = Method.PUT;
+            request.body.body_Items = _body;
+
+            callAsync();
+            return result;
+        }
+
+        //Delete Playlist
+        public string deletePlaylist(String id)
+        {
+            request.parameter = "id=" + id;
+            request.method = Method.DELETE;
+            callAsync();
+            return result;
+        }
 
         //Make the Api Call
         private async Task callAsync()
@@ -131,14 +157,21 @@ namespace YoutubeLibrary.youtube
             request.parameter = parts + mine + parameters;
             switch (request.method)
             {
-                case Method.POST:
-                    result = await service.api.postApiAsync(request);
-                    break;
+                
                 case Method.GET:
                     if (request.parameter != null)
                     {
-                        result = await service.api.callApiAsync(request);
+                        result = await service.api.getApiAsync(request);
                     }
+                    break;
+                case Method.POST:
+                    result = await service.api.postApiAsync(request);
+                    break;
+                case Method.PUT:
+                    result = await service.api.postApiAsync(request);
+                    break;
+                case Method.DELETE:
+                    result = await service.api.postApiAsync(request);
                     break;
                 default:
                     throw new Exception("Backend Error");
