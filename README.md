@@ -1,5 +1,5 @@
 # Plugin.YoutubeLibrary
-A Xamarin Library for handling Youtube Api requests
+A Xamarin Library for handling Youtube API requests
 
 ## Folders Used
 ### Api:
