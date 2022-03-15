@@ -1,15 +1,6 @@
 # Plugin.YoutubeLibrary
 A Xamarin Library for handling YouTube API requests
 
-## Folders Used
-### Api:
- This contains the code for handling the api calls 
-### Util
-Random helpers/functions used 
-### Youtube
-The youtube service 
-
-
 ## Create the service
 The Plugin could be created with only the api key or both an api key and an access token. provididng an acces token allows for more functionality
 ``` c#
@@ -29,7 +20,7 @@ To get the playlists calls the **youtube.playlistsList.getPlaylist(String[] part
 ``` c#
 public MainWindow()
 {
-  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
+  var playlistsJson = youtube.playlistsList.getPlaylistAsync(new string[] { "snippet", "contentDetails" }, true);
   
 }
 ``` 
