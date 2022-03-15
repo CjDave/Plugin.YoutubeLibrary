@@ -1,14 +1,18 @@
-﻿using YoutubeLibrary.youtube;
-using YoutubeLibrary.youtube.Parameters;
-using YoutubeLibrary.util;
-using static YoutubeLibrary.youtube.Parameters.RequestClass;
+﻿using Plugin.Youtube.Api_Youtube;
+using Plugin.Youtube.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
+using static Plugin.Youtube.Api_Youtube.RequestClass;
 
-namespace YoutubeLibrary.Api
+namespace Plugin.Youtube.Api
 {
     public class ApiCall
     {
-        private Base credential;
+        private Api_Youtube.Base credential;
         private HttpClient client;
         private HttpMethod httpMethod;
         private HttpRequestMessage request;

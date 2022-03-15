@@ -1,7 +1,8 @@
 ﻿
-using YoutubeLibrary.Api;
+using Plugin.Youtube.Api;
+using Plugin.Youtube.Api_Youtube.Playlists;
 
-namespace YoutubeLibrary.youtube
+namespace Plugin.Youtube.Api_Youtube
 {
     internal class Base
     {

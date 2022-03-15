@@ -1,17 +1,18 @@
-﻿
-namespace YoutubeLibrary.youtube.Parameters
+﻿using System.Collections.Generic;
+
+
+namespace Plugin.Youtube.Api_Youtube
 {
-    //Header
-    public record Header
+    public class Header
     {
-        public string title { get; init; }
-        public string value { get; init; }
+        public string title { get; set; }
+        public string value { get; set; }
     }
     //Parameter
-    public record Parameter
+    public class Parameter
     {
-        public string title { get; init; }
-        public string value { get; init; }
+        public string title { get; set; }
+        public string value { get; set; }
         public Parameter(string Title, string Value)
         {
             title = Title;
@@ -21,8 +22,8 @@ namespace YoutubeLibrary.youtube.Parameters
     //Body Item
     public class Body_Item
     {
-        public string title { get; init; }
-        public string value { get; init; }
+        public string title { get; set; }
+        public string value { get; set; }
         public List<Body_Item> values;
         public Body_Item(string Title)
         {
@@ -46,7 +47,7 @@ namespace YoutubeLibrary.youtube.Parameters
 
     }
     //Body 
-    public record Body
+    public class Body
     {
         public List<Body_Item> body_Items;
         public Body()
@@ -54,14 +55,14 @@ namespace YoutubeLibrary.youtube.Parameters
             body_Items = new List<Body_Item>();
         }
     }
-    
+
     public class RequestClass
     {
         public const string Youtube = "https://youtube.googleapis.com/youtube/v3/";
         public const string Http = "HTTP/1.1";
         public enum Method { GET, POST, DELETE, PUT }
         //Header values
-        public struct Request
+        public class Request
         {
             public Method method { get; set; }
             public string resource = "";

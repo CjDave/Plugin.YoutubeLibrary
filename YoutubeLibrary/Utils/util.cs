@@ -1,7 +1,8 @@
 ﻿
-using YoutubeLibrary.youtube.Parameters;
+using System;
+using Plugin.Youtube.Api_Youtube;
 //utilities for performing various tasks
-namespace YoutubeLibrary.util
+namespace Plugin.Youtube.Utils
 {
     public static class valueUtil
     {
@@ -25,7 +26,7 @@ namespace YoutubeLibrary.util
             string parameter = "";
             foreach (Parameter temp in pairs)
             {
-                parameter = parameter + temp.title + "=" + temp.value;
+                parameter = parameter + temp.title + "=" + temp.value+"&";
             }
             return parameter;
         }

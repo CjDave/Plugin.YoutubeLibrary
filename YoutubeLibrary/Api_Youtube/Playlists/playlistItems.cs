@@ -1,8 +1,10 @@
-﻿using YoutubeLibrary.util;
-using YoutubeLibrary.youtube.Parameters;
-using static YoutubeLibrary.youtube.Parameters.RequestClass;
-
-namespace YoutubeLibrary.youtube
+﻿using Plugin.Youtube.Utils;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using static Plugin.Youtube.Api_Youtube.RequestClass;
+using Plugin.Youtube.Result;
+namespace Plugin.Youtube.Api_Youtube.Playlists
 {
     public class PlaylistLists
     {
@@ -23,7 +25,7 @@ namespace YoutubeLibrary.youtube
         }
 
         //standard playlists request
-        public string getPlaylist(String[] part, bool Mine)
+        public async Task<PlaylistResponse> getPlaylistAsync(String[] part, bool Mine)
         {
             if (part == null)
             {
@@ -36,7 +38,7 @@ namespace YoutubeLibrary.youtube
                 request.method = Method.GET;
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
-                callAsync();
+                await callAsync();
                 return result;
             }
             return error;
@@ -44,7 +46,7 @@ namespace YoutubeLibrary.youtube
         }
 
         //Get the Playlists request from optional parameters
-        public string getPlaylist(String[] part, bool Mine, Parameter[] parameter)
+        public async Task<string> getPlaylistAsync(String[] part, bool Mine, Parameter[] parameter)
         {
             if (part == null)
             {
@@ -53,11 +55,12 @@ namespace YoutubeLibrary.youtube
             }
             else
             {
+                parts = valueUtil.getPart(part);  //get the parts
                 request.method = Method.GET;
                 parameters = parameters + valueUtil.getParameter(parameter);
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
-                callAsync();
+                await callAsync();
                 return result;
             }
             return error;
@@ -77,7 +80,7 @@ namespace YoutubeLibrary.youtube
                 request.method = Method.POST;
 
                 //create new body item for the snippets
-                Parameters.Body_Item snippet_BodyItem = new Parameters.Body_Item("snippet", new List<Body_Item>());
+                Body_Item snippet_BodyItem = new Body_Item("snippet", new List<Body_Item>());
                 snippet_BodyItem.values.Add(new Body_Item("title", title));
                 snippet_BodyItem.values.Add(new Body_Item("description", Description));
 
@@ -144,7 +147,7 @@ namespace YoutubeLibrary.youtube
         //Delete Playlist
         public string deletePlaylist(String id)
         {
-            request.parameter = "id=" + id;
+            request.parameter = "id=" + id + "&";
             request.method = Method.DELETE;
             callAsync();
             return result;
@@ -157,7 +160,7 @@ namespace YoutubeLibrary.youtube
             request.parameter = parts + mine + parameters;
             switch (request.method)
             {
-                
+
                 case Method.GET:
                     if (request.parameter != null)
                     {
@@ -187,6 +190,5 @@ namespace YoutubeLibrary.youtube
         }
 
     }
-
 
 }
