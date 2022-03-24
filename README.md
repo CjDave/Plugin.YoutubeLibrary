@@ -18,12 +18,31 @@ public MainWindow()
 To get the playlists calls the **youtube.playlistsList.getPlaylist(String[] part, bool Mine)** methods. This is an overloaded methood that takes in the following : the parts, Mine, parameter(optional); 
 
 ``` c#
-public MainWindow()
+public Main()
 {
-  var playlistsJson = youtube.playlistsList.getPlaylistAsync(new string[] { "snippet", "contentDetails" }, true);
-  
+   YoutubeClient youtubeClient = new YoutubeClient(ApiKey, token);
+   PlaylistResponse Playlists = await youtubeClient.playlistsList.getPlaylistAsync(new string[] { "snippet" }, true);
 }
 ``` 
+
+## Api Requests
+An example of Api requests and the corresponding parts of the code
+
+> POST https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=contentDetails&prettyPrint=true&key=[API_KEY] HTTP/1.1 </br>
+> A single parameter is:
+> part=snippet
+> Combination of multiple parameters
+> part=snippet&part=contentDetails&prettyPrint=true
+> **Adding a parameter**
+ ``` c#
+new Parameter("prettyPrint", "true");
+``` 
+## A request with parameters
+```  c#
+PlaylistResponse Playlists = await youtubeClient.playlistsList.getPlaylistAsync(new string[] { "snippet" }, true, new Parameter("prettyPrint", "true"));
+``` 
+
+
 ## Insert playlists
 
 ``` c#
@@ -31,38 +50,4 @@ public MainWindow()
 {
   var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
 }
-``` 
-
-
-## Api Requests
-An example of Api requests and the corresponding parts of the code
-``` c#
-POST https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=contentDetails&prettyPrint=true&key=[API_KEY] HTTP/1.1
-``` 
-A single parameter is
-``` c#
-part=snippet
-``` 
-Combination of multiple parameters
-``` c#
-part=snippet&part=contentDetails&prettyPrint=true
-``` 
-**Adding a parameter**
-``` c#
-new Parameter("prettyPrint", "true")
-``` 
-
-A body 
-``` c#
-Body
-{
-  "snippet": {
-    "title": "NewVideo",
-    "channelId": ""
-  },
-  "contentDetails": {
-    "itemCount": 1
-  }
-}
-
 ``` 
