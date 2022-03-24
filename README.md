@@ -29,11 +29,12 @@ public Main()
 An example of Api requests and the corresponding parts of the code
 
 > POST https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&part=contentDetails&prettyPrint=true&key=[API_KEY] HTTP/1.1 </br>
-> A single parameter is:
-> part=snippet
-> Combination of multiple parameters
-> part=snippet&part=contentDetails&prettyPrint=true
-> **Adding a parameter**
+> A single parameter is: </br>
+> part=snippet </br>
+> Combination of multiple parameters </br>
+> part=snippet&part=contentDetails&prettyPrint=true </br>
+
+**Adding a parameter** 
  ``` c#
 new Parameter("prettyPrint", "true");
 ``` 
