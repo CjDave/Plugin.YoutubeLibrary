@@ -14,6 +14,7 @@ public MainWindow()
   YoutubeClient youtube2 = new YoutubeClient(ApiKey, Accesstoken);
 }
 ``` 
+# Playlists
 ## Retrieve playlists
 To get the playlists calls the **youtubeClient.playlistsList.getPlaylistAsync(String[] part, bool Mine)** methods. This is an overloaded methood that takes in the following : the parts, Mine, parameter(optional); 
 
@@ -47,10 +48,63 @@ PlaylistResponse Playlists = await youtubeClient.playlistsList.getPlaylistAsync(
 
 
 ## Insert playlists
-
+To insert a playlist you call the overloaded insertPlaylistAsync Methods
 ``` c#
-public MainWindow()
-{
-  var playlistsJson = youtube.playlistsList.getPlaylist(new string[] { "snippet", "contentDetails" }, true);
+PlaylistResponse playlist = await youtubeClient.playlistsList.insertPlaylistAsync("playlistTitle", "Description", new string[] { "snippet" });
 }
 ``` 
+You could optionally add parameters 
+``` c#
+PlaylistResponse playlist = = await youtubeClient.playlistsList.insertPlaylistAsync("playlistTitle", "Description", new string[] { "snippet", }, parameter );
+}
+``` 
+## Adding a body
+Bodies are json objects, the body and Body_Item are used to acheive this Json structure<br>
+Body_Item class can store a single value 
+``` c#
+var b= new Body_Item("itemcount", "1")
+//The equilavent
+//{
+// "itemCount": 1
+// }
+``` 
+Or multiple Body_Item classes
+``` c#
+Body_Item contentDetails = new Body_Item("contentDetails");
+contentDetails.values.Add(new Body_Item("itemcount", "1"));
+contentDetails.values.Add(new Body_Item("itemcount", "2"));
+/*
+The equivalent of
+"contentDetails": {
+    "itemCount": 1,
+    "itemCount": 2
+  }
+  */
+``` 
+With this you are able to form Json objects</br>
+Example: The equivalent of this Json 
+{
+  "contentDetails": {
+    "itemCount": 1
+  },
+  "snippet": {
+    "title": "playlistsTitle",
+    "description": "playlistsDescription",
+    "localized": {
+      "title": "local",
+      "description": "localDescription"
+    }
+  }
+}
+is
+``` c#
+ Body_Item snippetItems = new Body_Item("snippet");
+            snippetItems.values.Add(new Body_Item("title", "playlistTitle"));
+            snippetItems.values.Add(new Body_Item("description", "playlistsDescription"));
+            snippetItems.values.Add(new Body_Item("localized", new List<Body_Item> { new Body_Item("title", "local"), new Body_Item("description", "LocalDescription") }));
+
+            Body_Item contentDetails = new Body_Item("contentDetails");
+            contentDetails.values.Add(new Body_Item("itemcount", "1"));
+ var body = new List<Body_Item> { contentDetails, snippetItems}        
+``` 
+
