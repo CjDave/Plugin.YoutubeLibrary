@@ -34,14 +34,16 @@ An example of Api requests and the corresponding parts of the code
 > Combination of multiple parameters </br>
 > part=snippet&part=contentDetails&prettyPrint=true </br>
 
-**Adding a parameter** 
+**Adding a parameter** </br>
+You add an array of  parametsrs to the function e.g 
  ``` c#
-new Parameter("prettyPrint", "true");
+ Parameter[] parameter = {new Parameter("prettyPrint", "true"), new Parameter("alt", "json")}; 
 ``` 
-## A request with parameters
-```  c#
-PlaylistResponse Playlists = await youtubeClient.playlistsList.getPlaylistAsync(new string[] { "snippet" }, true, new Parameter("prettyPrint", "true"));
-``` 
+And then you could do
+ ``` c#
+Parameter[] parameter = {new Parameter("prettyPrint", "true"), new Parameter("alt", "json")};
+PlaylistResponse Playlists = await youtubeClient.playlistsList.getPlaylistAsync(new string[] { "snippet" }, true, parameter);
+ ```
 
 
 ## Insert playlists
