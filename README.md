@@ -15,7 +15,7 @@ public MainWindow()
 }
 ``` 
 ## Retrieve playlists
-To get the playlists calls the **youtube.playlistsList.getPlaylist(String[] part, bool Mine)** methods. This is an overloaded methood that takes in the following : the parts, Mine, parameter(optional); 
+To get the playlists calls the **youtubeClient.playlistsList.getPlaylistAsync(String[] part, bool Mine)** methods. This is an overloaded methood that takes in the following : the parts, Mine, parameter(optional); 
 
 ``` c#
 public Main()
@@ -35,7 +35,7 @@ An example of Api requests and the corresponding parts of the code
 > part=snippet&part=contentDetails&prettyPrint=true </br>
 
 **Adding a parameter** </br>
-You add an array of  parametsrs to the function e.g 
+Optionally you could add an array of  parameters to the function e.g 
  ``` c#
  Parameter[] parameter = {new Parameter("prettyPrint", "true"), new Parameter("alt", "json")}; 
 ``` 
