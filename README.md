@@ -70,7 +70,7 @@ var b= new Body_Item("itemcount", "1")
  "itemCount": 1
 }
 ``` 
-** Or multiple Body_Item classes **
+**Or multiple Body_Item classes**
 ``` c#
 Body_Item contentDetails = new Body_Item("contentDetails");
 contentDetails.values.Add(new Body_Item("itemcount", "1"));
@@ -84,7 +84,7 @@ contentDetails.values.Add(new Body_Item("itemcount", "2"));
   */
 ``` 
 With this you are able to form Json objects</br>
-Example: The equivalent of this Json 
+Example: The code equivalent of this Json 
 ```yaml
 {
   "contentDetails": {
@@ -100,7 +100,6 @@ Example: The equivalent of this Json
   }
 }
 ```
-is
 ``` c#
  Body_Item snippetItems = new Body_Item("snippet");
             snippetItems.values.Add(new Body_Item("title", "playlistTitle"));
