@@ -59,22 +59,24 @@ PlaylistResponse playlist = = await youtubeClient.playlistsList.insertPlaylistAs
 }
 ``` 
 ## Adding a body
-Bodies are json objects, the body and Body_Item are used to acheive this Json structure<br>
+Bodies are json objects, the Body_Item class is used to acheive this Json structure<br>
 Body_Item class can store a single value 
 ``` c#
 var b= new Body_Item("itemcount", "1")
 //The equilavent
-//{
-// "itemCount": 1
-// }
 ``` 
-Or multiple Body_Item classes
+``` yaml
+{
+ "itemCount": 1
+}
+``` 
+** Or multiple Body_Item classes **
 ``` c#
 Body_Item contentDetails = new Body_Item("contentDetails");
 contentDetails.values.Add(new Body_Item("itemcount", "1"));
 contentDetails.values.Add(new Body_Item("itemcount", "2"));
-/*
-The equivalent of
+``` 
+```yaml
 "contentDetails": {
     "itemCount": 1,
     "itemCount": 2
@@ -83,6 +85,7 @@ The equivalent of
 ``` 
 With this you are able to form Json objects</br>
 Example: The equivalent of this Json 
+```yaml
 {
   "contentDetails": {
     "itemCount": 1
@@ -96,6 +99,7 @@ Example: The equivalent of this Json
     }
   }
 }
+```
 is
 ``` c#
  Body_Item snippetItems = new Body_Item("snippet");
