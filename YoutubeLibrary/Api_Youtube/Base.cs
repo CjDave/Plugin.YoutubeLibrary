@@ -1,5 +1,6 @@
 ﻿
 using Plugin.Youtube.Api;
+using Plugin.Youtube.Api_Youtube.Channels;
 using Plugin.Youtube.Api_Youtube.Playlists;
 
 namespace Plugin.Youtube.Api_Youtube
@@ -8,6 +9,7 @@ namespace Plugin.Youtube.Api_Youtube
     {
         internal string Api_key { get; set; }
         internal string Access_Token { get; set; }
+
         public Base(string key)
         {
             Api_key = key;
@@ -24,16 +26,19 @@ namespace Plugin.Youtube.Api_Youtube
     {
         private Base credential { get; set; }
         internal ApiCall api;
+        internal bool hasAccessToken;
         internal clientService(Base Credential)
         {
             credential = Credential;
             api = new ApiCall(Credential);
+            hasAccessToken = Credential.Access_Token == null ? true : false;
         }
     }
     public class YoutubeClient
     {
         private clientService service;
         public PlaylistLists playlistsList;
+        public Channel channel;
 
         //initialization without 0auth token
         public YoutubeClient(string key)
@@ -52,6 +57,7 @@ namespace Plugin.Youtube.Api_Youtube
         private void initResources()
         {
             playlistsList = new PlaylistLists(service);
+            channel = new Channel(service);
         }
 
     }

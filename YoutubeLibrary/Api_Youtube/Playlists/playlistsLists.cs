@@ -11,8 +11,9 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
         private Request request;
         private string parts, parameters, mine, error;
         private clientService service;
-        private string result;
-
+        private string _result;
+        private ResultClass result;
+        private PlaylistResponse playlistResponse;
 
         //Constructor
         internal PlaylistLists(clientService Service)
@@ -22,6 +23,7 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             parameters = "";
             mine = "";
             service = Service;
+
         }
 
         //standard playlists request
@@ -39,7 +41,6 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
                 await callAsync();
-                PlaylistResponse playlistResponse = serializer.jsonConvert<PlaylistResponse>(result);
                 return playlistResponse;
             }
             return null;
@@ -61,15 +62,14 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 parameters = parameters + valueUtil.getParameter(parameter);
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
-                await callAsync();
-                PlaylistResponse playlistResponse = serializer.jsonConvert<PlaylistResponse>(result);
+                await callAsync();//make the call
                 return playlistResponse;
             }
             return null;
         }
 
         //Insert a playlist
-        public string insertPlaylist(String title, String[] part, String Description = "", List<Body_Item> _body = null)
+        public async Task<PlaylistResponse> insertPlaylistAsync(String title, String Description, String[] part,  Parameter[] parameter = null, List<Body_Item> _body = null)
         {
             if (part == null)
             {
@@ -91,30 +91,35 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 {
                     request.body.body_Items = _body;
                 }
+                //Add parameters if provided
+                if (parameter != null)
+                {
+                    parameters = parameters + valueUtil.getParameter(parameter);
+                }
 
                 //Add the snippet to the body
                 request.body.body_Items.Add(snippet_BodyItem);
 
-                callAsync();
-                return result;
+                await callAsync();
+                return playlistResponse;
             }
-            return error;
+            return null;
         }
 
         //Insert a playlist  with optional parameters
-        public string insertPlaylist(String[] part, Parameter[] parameter, List<Body_Item> _body)
+        public async Task<PlaylistResponse> insertPlaylistAsync(String[] part, Parameter[] parameter, List<Body_Item> _body)
         {
             if (part == null)
             {
                 error = "Please Enter A Part";
                 throwException(error);
-                return error;
+                return null;
             }
             if (_body == null)
             {
                 error = "Please Enter A Body";
                 throwException(error);
-                return error;
+                return null;
             }
 
             parts = valueUtil.getPart(part);
@@ -122,28 +127,28 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             request.body.body_Items = _body;
             parameters = parameters + valueUtil.getParameter(parameter);
 
-            callAsync();
-            return result;
+            await callAsync();
+            return playlistResponse;
 
 
         }
 
         //Update A Playlists
-        public string updatePlaylist(String[] part, List<Body_Item> _body)
+        public async Task<PlaylistResponse> updatePlaylist(String[] part, List<Body_Item> _body)
         {
             if (_body == null)
             {
                 error = "Please Enter A Body";
                 throwException(error);
-                return error;
+                return null;
             }
 
             parts = valueUtil.getPart(part);
             request.method = Method.PUT;
             request.body.body_Items = _body;
 
-            callAsync();
-            return result;
+            await callAsync();
+            return playlistResponse;
         }
 
         //Delete Playlist
@@ -152,7 +157,7 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             request.parameter = "id=" + id + "&";
             request.method = Method.DELETE;
             await callAsync();
-            return result;
+            return _result;
         }
 
         //Make the Api Call
@@ -180,9 +185,15 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                     break;
                 default:
                     throw new Exception("Backend Error");
-                    break;
             }
-
+            if (result.error != null)
+            {
+                throw new ExceptionHandler.BaseException("Error: " + result.code + "; " + result.error);
+            }
+            else
+            {
+                playlistResponse = serializer.jsonConvert<PlaylistResponse>(result.content); //serialize results
+            }
         }
 
         //Throw Exception

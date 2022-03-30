@@ -76,4 +76,17 @@ namespace Plugin.Youtube.Api_Youtube
 
         };
     }
+    public class ResultClass
+    {
+        internal string error { get; set; }
+        internal int code { get; set; }
+        internal string content { get; set; }
+
+        internal ResultClass()
+        {
+            error = null;
+            code = 0;
+            content = null;
+        }
+    }
 }
