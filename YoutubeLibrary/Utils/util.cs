@@ -6,6 +6,7 @@ namespace Plugin.Youtube.Utils
 {
     public static class valueUtil
     {
+        //Convert the string array to parameters
         public static string getPart(String[] part)
         {
             string parts = "";
@@ -18,9 +19,9 @@ namespace Plugin.Youtube.Utils
 
         public static string isMine(bool mine)
         {
-            return mine ? "mine=true" : "&mine=false";
+            return mine ? "mine=true&" : "mine=false&";
         }
-
+        //Convert  to parameters
         public static string getParameter(Parameter[] pairs)
         {
             string parameter = "";
@@ -31,12 +32,6 @@ namespace Plugin.Youtube.Utils
             return parameter;
         }
     }
-
-
-
-
-
-
 
     public static class exceptionHandler
     {

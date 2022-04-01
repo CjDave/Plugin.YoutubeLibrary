@@ -21,16 +21,17 @@ namespace Plugin.Youtube.Api
         private HttpResponseMessage response;
         private Request requestData;
         private ExceptionHandler.BaseException exception;
+        private ResultClass result;
 
         //Constructor
         internal ApiCall(Base Credential)
         {
             credential = Credential;
             client = new HttpClient();
-            key_Parameter = "&key=" + credential.Api_key + " ";
+            key_Parameter = "key=" + credential.Api_key + " ";
             accesstoken_Parameter = "Bearer " + credential.Access_Token;
             response = new HttpResponseMessage();
-
+            result = new ResultClass();
         }
 
         //Destructor
@@ -46,49 +47,49 @@ namespace Plugin.Youtube.Api
         }
 
         //Put Api
-        internal async Task<string> putApiAsync(RequestClass.Request _request)
+        internal async Task<ResultClass> putApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
             addData(true);
 
             await makeRequestAsync();
-            return content;
+            return result;
         }
         //Post Api
-        internal async Task<string> postApiAsync(RequestClass.Request _request)
+        internal async Task<ResultClass> postApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
             addData(true);
 
             await makeRequestAsync();
-            return content;
+            return result;
         }
         //Get Api 
-        internal async Task<string> getApiAsync(RequestClass.Request _request)
+        internal async Task<ResultClass> getApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
             if (checkExceptions())
             {
                 addData(false);
-
                 await makeRequestAsync();
-                return content;
+                return result;
             }
             else
             {
                 throw exception;
+                result.error = exception.Message;
             }
-            return exception.Message;
+            return result;
 
         }
         //Delete Api
-        internal async Task<string> deleteApiAsync(RequestClass.Request _request)
+        internal async Task<ResultClass> deleteApiAsync(RequestClass.Request _request)
         {
             requestData = _request;
             addData(false);
 
             await makeRequestAsync();
-            return content;
+            return result;
         }
 
         //Add request data
@@ -112,19 +113,21 @@ namespace Plugin.Youtube.Api
             try
             {
                 response = await client.SendAsync(request);
+                if (response.IsSuccessStatusCode)//Api request is a Success
+                {
+                    result.content = await response.Content.ReadAsStringAsync();
+                }
+                else //Api request failed
+                {
+                    result.error = response.ReasonPhrase;
+                    result.code = (int)response.StatusCode;
+                }
             }
             catch (Exception ex)
             {
-                content = ex.Message;
+                result.error = ex.Message;
             }
-            if (response.IsSuccessStatusCode)
-            {
-                content = await response.Content.ReadAsStringAsync();
-            }
-            else
-            {
-                content = response.ReasonPhrase;
-            }
+
         }
         //check Exceptions
         private bool checkExceptions()//incomplete...

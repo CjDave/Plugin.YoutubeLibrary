@@ -18,17 +18,24 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
         //Constructor
         internal PlaylistLists(clientService Service)
         {
+            //     init();
+            service = Service;
+
+        }
+        private void init()
+        {
             request = new Request { resource = "playlists?" };
             parts = "";
             parameters = "";
             mine = "";
-            service = Service;
-
+            error = "";
+            playlistResponse = new PlaylistResponse();
+            result = new ResultClass();
         }
-
         //standard playlists request
-        public async Task<PlaylistResponse> getPlaylistAsync(String[] part, bool Mine)
+        public async Task<PlaylistsResponse> getPlaylistAsync(String[] part, bool Mine)
         {
+            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -41,15 +48,16 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
                 await callAsync();
-                return playlistResponse;
+                return serializer.jsonConvert<PlaylistsResponse>(result.content);
             }
             return null;
 
         }
 
         //Get the Playlists request from optional parameters
-        public async Task<PlaylistResponse> getPlaylistAsync(String[] part, bool Mine, Parameter[] parameter)
+        public async Task<PlaylistsResponse> getPlaylistAsync(String[] part, bool Mine, Parameter[] parameter)
         {
+            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -59,18 +67,19 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             {
                 parts = valueUtil.getPart(part);  //get the parts
                 request.method = Method.GET;
-                parameters = parameters + valueUtil.getParameter(parameter);
+                parameters = parameter == null ? parameters : parameters + valueUtil.getParameter(parameter);
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
                 await callAsync();//make the call
-                return playlistResponse;
+                return serializer.jsonConvert<PlaylistsResponse>(result.content);
             }
             return null;
         }
 
         //Insert a playlist
-        public async Task<PlaylistResponse> insertPlaylistAsync(String title, String Description, String[] part,  Parameter[] parameter = null, List<Body_Item> _body = null)
+        public async Task<PlaylistResponse> insertPlaylistAsync(String title, String Description, String[] part, Parameter[] parameter = null, List<Body_Item> _body = null)
         {
+            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -101,7 +110,7 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 request.body.body_Items.Add(snippet_BodyItem);
 
                 await callAsync();
-                return playlistResponse;
+                return serializer.jsonConvert<PlaylistResponse>(result.content);
             }
             return null;
         }
@@ -109,6 +118,7 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
         //Insert a playlist  with optional parameters
         public async Task<PlaylistResponse> insertPlaylistAsync(String[] part, Parameter[] parameter, List<Body_Item> _body)
         {
+            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -121,40 +131,50 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 throwException(error);
                 return null;
             }
-
+            //Add parameters if provided
+            if (parameter != null)
+            {
+                parameters = parameters + valueUtil.getParameter(parameter);
+            }
             parts = valueUtil.getPart(part);
             request.method = Method.POST;
             request.body.body_Items = _body;
-            parameters = parameters + valueUtil.getParameter(parameter);
+
 
             await callAsync();
-            return playlistResponse;
+            return serializer.jsonConvert<PlaylistResponse>(result.content);
 
 
         }
 
         //Update A Playlists
-        public async Task<PlaylistResponse> updatePlaylist(String[] part, List<Body_Item> _body)
+        public async Task<PlaylistResponse> updatePlaylist(String[] part, List<Body_Item> _body, Parameter[] parameter=null)
         {
+            init();
             if (_body == null)
             {
                 error = "Please Enter A Body";
                 throwException(error);
                 return null;
             }
-
+            //Add parameters if provided
+            if (parameter != null)
+            {
+                parameters = parameters + valueUtil.getParameter(parameter);
+            }
             parts = valueUtil.getPart(part);
             request.method = Method.PUT;
             request.body.body_Items = _body;
 
             await callAsync();
-            return playlistResponse;
+            return result.content != "" ? serializer.jsonConvert<PlaylistResponse>(result.content) : null;
         }
 
         //Delete Playlist
-        public async Task<string> deletePlaylistAsync(String id)
+        public async Task<string> deletePlaylistAsync(string id)
         {
-            request.parameter = "id=" + id + "&";
+            init();
+            parameters = "id=" + id + "&";
             request.method = Method.DELETE;
             await callAsync();
             return _result;
@@ -189,10 +209,11 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             if (result.error != null)
             {
                 throw new ExceptionHandler.BaseException("Error: " + result.code + "; " + result.error);
+                _result = "Fail";
             }
             else
             {
-                playlistResponse = serializer.jsonConvert<PlaylistResponse>(result.content); //serialize results
+                _result = "Success";
             }
         }
 
