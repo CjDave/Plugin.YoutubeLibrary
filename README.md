@@ -45,13 +45,18 @@ And then you could do
 Parameter[] parameter = {new Parameter("prettyPrint", "true"), new Parameter("alt", "json")};
 PlaylistResponse Playlists = await youtubeClient.playlistsList.getPlaylistAsync(new string[] { "snippet" }, true, parameter);
  ```
-
+## Delete playlists
+``` c#
+string id="playlist_id";
+var response = await youtubeClient.playlistsList.deletePlaylistAsync(id);
+}
+``` 
 
 ## Insert playlists
 To insert a playlist you call the overloaded insertPlaylistAsync Methods
 ``` c#
 PlaylistResponse playlist = await youtubeClient.playlistsList.insertPlaylistAsync("playlistTitle", "Description", new string[] { "snippet" });
-}
+
 ``` 
 You could optionally add parameters 
 ``` c#
