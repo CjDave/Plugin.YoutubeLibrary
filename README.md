@@ -135,11 +135,11 @@ ChannelResponse channelResponse = await youtubeClient.channel.searchByUsernameAs
 ## Search for a channel by channel id
 ``` c#
 string id = "Channel_Id";
-ChannelResponse channelResponse2 = await youtubeClient.channel.searchByIdAsync(id);
+ChannelResponse channelResponse = await youtubeClient.channel.searchByIdAsync(id);
 ``` 
 ##  Get your own channel
 ``` c#
-ChannelResponse channelResponse3 = await youtubeClient.channel.getMyChannelAsync(true);
+ChannelResponse channelResponse = await youtubeClient.channel.getMyChannelAsync(true);
 ``` 
 
 
