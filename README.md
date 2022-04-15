@@ -7,7 +7,7 @@ A Xamarin Library for handling YouTube API requests
 2. [ Code version of Api requests](#Api_Requests)
 3. [Playlists](#Playlists)
 4. [Channels](#Channels)
-
+4. [AnyRequests](#AnyRequests)
 
 
 # Initialization<a name="Initialization"></a>
@@ -141,6 +141,20 @@ ChannelResponse channelResponse = await youtubeClient.channel.searchByIdAsync(id
 ``` c#
 ChannelResponse channelResponse = await youtubeClient.channel.getMyChannelAsync(true);
 ``` 
+# AnyRequests<a name="AnyRequests"></a>
+This method here can be used to make any sort of requests
+``` c#
+Task<HttpResponseMessage> makeRequestAsync(Method method, string youtube, string resource, string stringParameter, Parameter[] parameter = null, List<Body_Item> body = null)
+``` 
+Here you specify the HTTPMethod, the Http request(youtube), the resource, parameters and optionally, the body. The method returns the result as a HttpResponseMessage
+``` c#
+ HttpResponseMessage result = await youtubeClient.anyRequest.makeRequestAsync(Method.GET, "https://youtube.googleapis.com/youtube/v3/", "playlists?", "part=snippet&part=contentDetails&mine=true");
 
+``` 
+OR
+``` c#
+ HttpResponseMessage result = await youtubeClient.anyRequest.makeRequestAsync(Method.GET, "https://youtube.googleapis.com/youtube/v3/", "playlists?", "", new Parameter[]{new Parameter("part","contentDetatils")});
+
+``` 
 
 
