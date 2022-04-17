@@ -1,6 +1,7 @@
 ﻿
 using Plugin.Youtube.Api;
 using Plugin.Youtube.Api_Youtube.Channels;
+using Plugin.Youtube.Api_Youtube.PlaylistItems;
 using Plugin.Youtube.Api_Youtube.Playlists;
 
 namespace Plugin.Youtube.Api_Youtube
@@ -39,6 +40,8 @@ namespace Plugin.Youtube.Api_Youtube
         private clientService service;
         public PlaylistLists playlistsList;
         public Channel channel;
+        public AnyRequest anyRequest;
+        public playlistItems playlistItem;
 
         //initialization without 0auth token
         public YoutubeClient(string key)
@@ -58,6 +61,8 @@ namespace Plugin.Youtube.Api_Youtube
         {
             playlistsList = new PlaylistLists(service);
             channel = new Channel(service);
+            anyRequest = new AnyRequest(service);
+            playlistItem= new playlistItems(service); 
         }
 
     }

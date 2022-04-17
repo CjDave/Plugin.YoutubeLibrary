@@ -47,7 +47,7 @@ namespace Plugin.Youtube.Api_Youtube.Channels
 
         }
         //Search For a Playlist by Username
-        public async Task<ChannelResponse> searchByUsername(string forUsername, Parameter[] parameter = null)
+        public async Task<ChannelResponse> searchByUsernameAsync(string forUsername, Parameter[] parameter = null)
         {
             parameters = "forUsername=" + forUsername + "&";
             createRequest(parameter);
@@ -57,7 +57,7 @@ namespace Plugin.Youtube.Api_Youtube.Channels
         }
 
         //Get an owners Channel
-        public async Task<ChannelResponse> getMyChannel(bool Mine, Parameter[] parameter = null)
+        public async Task<ChannelResponse> getMyChannelAsync(bool Mine, Parameter[] parameter = null)
         {
             mine = valueUtil.isMine(Mine);
             createRequest(parameter) ; 
@@ -65,7 +65,7 @@ namespace Plugin.Youtube.Api_Youtube.Channels
             return serializer.jsonConvert<ChannelResponse>(result.content); //serialize results
         }
         //Update a channel
-        public async Task<ChannelResponse> updateMyChannel(string[] part, List<Body_Item> _body, Parameter[] parameter = null)//Incomplete
+        public async Task<ChannelResponse> updateMyChannelAsync(string[] part, List<Body_Item> _body, Parameter[] parameter = null)//Incomplete
         {
             if (part == null)
             {

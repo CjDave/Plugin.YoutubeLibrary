@@ -81,12 +81,14 @@ namespace Plugin.Youtube.Api_Youtube
         internal string error { get; set; }
         internal int code { get; set; }
         internal string content { get; set; }
+        internal System.Net.Http.HttpResponseMessage httpResponse { get; set; }
 
         internal ResultClass()
         {
             error = null;
             code = 0;
             content = null;
+            httpResponse = null;
         }
     }
 }

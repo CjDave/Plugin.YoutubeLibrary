@@ -18,7 +18,7 @@ namespace Plugin.Youtube.Api
         private HttpRequestMessage request;
         private string requestUri, key_Parameter, accesstoken_Parameter, content;
         private StringContent body;
-        private HttpResponseMessage response;
+      //  private HttpResponseMessage response;
         private Request requestData;
         private ExceptionHandler.BaseException exception;
         private ResultClass result;
@@ -30,8 +30,9 @@ namespace Plugin.Youtube.Api
             client = new HttpClient();
             key_Parameter = "key=" + credential.Api_key + " ";
             accesstoken_Parameter = "Bearer " + credential.Access_Token;
-            response = new HttpResponseMessage();
+           
             result = new ResultClass();
+            result.httpResponse = new HttpResponseMessage();
         }
 
         //Destructor
@@ -43,7 +44,7 @@ namespace Plugin.Youtube.Api
             request = null;
             httpMethod = null;
             key_Parameter = null;
-            response = new HttpResponseMessage();
+            result.httpResponse = new HttpResponseMessage();
         }
 
         //Put Api
@@ -72,12 +73,10 @@ namespace Plugin.Youtube.Api
             {
                 addData(false);
                 await makeRequestAsync();
-                return result;
             }
             else
             {
                 throw exception;
-                result.error = exception.Message;
             }
             return result;
 
@@ -110,24 +109,25 @@ namespace Plugin.Youtube.Api
         //Send the Api Request
         private async Task makeRequestAsync()
         {
+
             try
             {
-                response = await client.SendAsync(request);
-                if (response.IsSuccessStatusCode)//Api request is a Success
+                result.httpResponse = await client.SendAsync(request);
+                if (result.httpResponse.IsSuccessStatusCode)//Api request is a Success
                 {
-                    result.content = await response.Content.ReadAsStringAsync();
+                    result.content = await result.httpResponse.Content.ReadAsStringAsync();
                 }
                 else //Api request failed
                 {
-                    result.error = response.ReasonPhrase;
-                    result.code = (int)response.StatusCode;
+                    result.error = result.httpResponse.ReasonPhrase;
+                    result.code = (int)result.httpResponse.StatusCode;
                 }
             }
             catch (Exception ex)
             {
                 result.error = ex.Message;
             }
-
+            
         }
         //check Exceptions
         private bool checkExceptions()//incomplete...

@@ -21,7 +21,7 @@ namespace Plugin.Youtube.Utils
         {
             return mine ? "mine=true&" : "mine=false&";
         }
-        //Convert  to parameters
+        //Convert to parameters
         public static string getParameter(Parameter[] pairs)
         {
             string parameter = "";

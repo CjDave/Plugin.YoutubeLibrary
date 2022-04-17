@@ -1,41 +1,46 @@
-﻿using Plugin.Youtube.Utils;
+﻿using Plugin.Youtube.Result;
+using Plugin.Youtube.Utils;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using static Plugin.Youtube.Api_Youtube.RequestClass;
-using Plugin.Youtube.Result;
-namespace Plugin.Youtube.Api_Youtube.Playlists
+
+namespace Plugin.Youtube.Api_Youtube.BaseRequests
 {
-    public class PlaylistLists
+    public class baseRequests
     {
-        private Request request;
-        private string parts, parameters, mine, error;
+        protected Request request;
+        protected string parts, parameters, mine, error;
         private clientService service;
         private string _result;
         private ResultClass result;
-        private PlaylistResponse playlistResponse;
 
+     
         //Constructor
-        internal PlaylistLists(clientService Service)
+        internal baseRequests(clientService Service)
         {
-            //     init();
             service = Service;
-
         }
-        private void init()
+        protected void init(string resource)
         {
-            request = new Request { resource = "playlists?" };
+            request = new Request { resource = resource };
             parts = "";
             parameters = "";
             mine = "";
             error = "";
-            playlistResponse = new PlaylistResponse();
             result = new ResultClass();
         }
-        //standard playlists request
-        public async Task<PlaylistsResponse> getPlaylistAsync(String[] part, bool Mine)
+        //return the Http result Class
+        protected ResultClass getResult()
         {
-            init();
+            ResultClass tempresult = result;
+            return tempresult;
+        }
+
+        //standard playlists request
+        protected async Task getAsync(String[] part, bool Mine)
+        {
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -48,16 +53,12 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 mine = valueUtil.isMine(Mine);
                 request.Mine = Mine;
                 await callAsync();
-                return serializer.jsonConvert<PlaylistsResponse>(result.content);
             }
-            return null;
-
         }
 
         //Get the Playlists request from optional parameters
-        public async Task<PlaylistsResponse> getPlaylistAsync(String[] part, bool Mine, Parameter[] parameter)
+        protected async Task getAsync(String[] part,  Parameter[] parameter)
         {
-            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -68,18 +69,13 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 parts = valueUtil.getPart(part);  //get the parts
                 request.method = Method.GET;
                 parameters = parameter == null ? parameters : parameters + valueUtil.getParameter(parameter);
-                mine = valueUtil.isMine(Mine);
-                request.Mine = Mine;
                 await callAsync();//make the call
-                return serializer.jsonConvert<PlaylistsResponse>(result.content);
             }
-            return null;
         }
 
         //Insert a playlist
-        public async Task<PlaylistResponse> insertPlaylistAsync(String title, String Description, String[] part, Parameter[] parameter = null, List<Body_Item> _body = null)
+        protected async Task insertAsync(String title, String Description, String[] part, Parameter[] parameter = null, List<Body_Item> _body = null)
         {
-            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
@@ -110,26 +106,21 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
                 request.body.body_Items.Add(snippet_BodyItem);
 
                 await callAsync();
-                return serializer.jsonConvert<PlaylistResponse>(result.content);
             }
-            return null;
         }
 
         //Insert a playlist  with optional parameters
-        public async Task<PlaylistResponse> insertPlaylistAsync(String[] part, Parameter[] parameter, List<Body_Item> _body)
+        protected async Task insertAsync(String[] part, Parameter[] parameter, List<Body_Item> _body)
         {
-            init();
             if (part == null)
             {
                 error = "Please Enter A Part";
                 throwException(error);
-                return null;
             }
             if (_body == null)
             {
                 error = "Please Enter A Body";
                 throwException(error);
-                return null;
             }
             //Add parameters if provided
             if (parameter != null)
@@ -139,23 +130,16 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             parts = valueUtil.getPart(part);
             request.method = Method.POST;
             request.body.body_Items = _body;
-
-
             await callAsync();
-            return serializer.jsonConvert<PlaylistResponse>(result.content);
-
-
         }
 
         //Update A Playlists
-        public async Task<PlaylistResponse> updatePlaylist(String[] part, List<Body_Item> _body, Parameter[] parameter=null)
+        protected async Task updateAsync(String[] part, List<Body_Item> _body, Parameter[] parameter = null)
         {
-            init();
             if (_body == null)
             {
                 error = "Please Enter A Body";
                 throwException(error);
-                return null;
             }
             //Add parameters if provided
             if (parameter != null)
@@ -165,19 +149,15 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
             parts = valueUtil.getPart(part);
             request.method = Method.PUT;
             request.body.body_Items = _body;
-
             await callAsync();
-            return result.content != "" ? serializer.jsonConvert<PlaylistResponse>(result.content) : null;
         }
 
         //Delete Playlist
-        public async Task<string> deletePlaylistAsync(string id)
+        protected async Task deleteAsync(string id)
         {
-            init();
             parameters = "id=" + id + "&";
             request.method = Method.DELETE;
             await callAsync();
-            return _result;
         }
 
         //Make the Api Call
@@ -225,3 +205,4 @@ namespace Plugin.Youtube.Api_Youtube.Playlists
     }
 
 }
+
